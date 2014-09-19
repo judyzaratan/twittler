@@ -3,25 +3,53 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <title> Twittler </title>
   </head>
-  <body>
-    <script>
+  
+  <style>
+		#header {
+    		background-color:#E6E6FA;
+    		color:purple;
+    		text-align:center;
+    		padding:5px;
+		}
+	</style>
 
+
+  
+  <body>
+	<div id="header">
+	<h1>Twittler</h1>
+	</div>
+
+  	<script>
+		
       $(document).ready(function(){
         var $body = $('body');
-        $body.html('');
-
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
-          index -= 1;
-        }
+        
+        //Function adds more tweets
+        var addTweets = function(){
+        
+        	var index = streams.home.length - 1;
+        	$('.tweets').remove();//clears page of old tweets 
+        
+        	//Creates button to grab new tweets
+		
+        	//Adds new tweets
+        	while(index >= 0){
+         	 	var tweet = streams.home[index];
+          		var $tweet = $('<div class="tweets"></div>');
+          		$tweet.text('@' + tweet.user + ': ' + tweet.message + ", Time: "  + tweet.created_at + " Index: " + index);
+          		$tweet.appendTo($body);
+          		index -= 1;
+          	}
+        };
+        
+        addTweets();
+        setInterval(addTweets, 300);
 
       });
-
     </script>
+
   </body>
 </html>

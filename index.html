@@ -7,46 +7,126 @@
   </head>
   
   <style>
-		#header {
-    		background-color:#E6E6FA;
-    		color:purple;
-    		text-align:center;
-    		padding:5px;
+  		body {
+    	background-image: url('sky_texture1980.jpg');
+    	background-attachment: fixed;
+    	background-repeat: no-repeat;
+    	background-size:1450px 850px;
 		}
+		
+		#header {
+    		background:#F0F0F0;
+    		color: blue;
+    		text-align:center;
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+
+		}
+		
+		#feed {
+			margin-top: 100px;
+    		color:black;
+    		text-align:center;
+    	}
+    		
+    	li {
+    		list-style-type: none;
+    		background-color:#F0F8FF;
+    		border-color:#D3D3D3;
+    		text-align:left;
+    		border-style: solid;
+    		margin-right: 500px;
+    		margin-left: 500px;
+		}	
+		
+		.user{
+			font-weight: bold;
+    		text-align:left;
+		}
+		
+		.time{
+			font-style: italic;
+			text-align: left;
+			font-size: small;
+			}
 	</style>
 
 
   
   <body>
 	<div id="header">
-	<h1>Twittler</h1>
+		<h1>Twittler</h1>
 	</div>
-
+	
+	<div id="feed">
+		<h1>Tweets</h1>
+		<button class="view" enabled>View new Tweets: <span class="newTweetIndex">0</span></button>
+	</div>
+	
   	<script>
 		
       $(document).ready(function(){
-        var $body = $('body');
-        
+        //Identifier for html element to add twitter msgs
+        var $feed = $('#feed' );
+        var lastTweetIndex = 0;
+       
+       
         //Function adds more tweets
-        var addTweets = function(){
-        
-        	var index = streams.home.length - 1;
-        	$('.tweets').remove();//clears page of old tweets 
-        
-        	//Creates button to grab new tweets
-		
+        var addTweets = function(x){	
+        	//captures total number of messages	
+			var tweetLength = streams.home.length;
+        	var index = tweetLength - 1;
+        	
+
+			
         	//Adds new tweets
         	while(index >= 0){
+        		$('#'+index).remove();
          	 	var tweet = streams.home[index];
-          		var $tweet = $('<div class="tweets"></div>');
-          		$tweet.text('@' + tweet.user + ': ' + tweet.message + ", Time: "  + tweet.created_at + " Index: " + index);
-          		$tweet.appendTo($body);
+          		var $tweet = $('<li id="'+ index +'"</li>');
+          		var $username = $('<ul class="user"><span class="' + tweet.user + '"></span></ul>');
+          		var $userTweet = $('<ul class="message"></ul>');
+          		var $tweetTime = $('<ul class="time"></ul>');
+          		
+          		
+          		$userTweet.text(tweet.message);
+          		$username.text('@' + tweet.user + ':');
+          		// ': ' + tweet.message + ", Time: "  + tweet.created_at + " Index: " + index);
+				$tweetTime.text(tweet.created_at);
+          		$tweet.appendTo($feed);
+          		$username.appendTo('#'+index);
+          		$userTweet.appendTo('#'+index);
+          		$tweetTime.appendTo('#'+index);
+          		
           		index -= 1;
+          		
           	}
+			//returns the message array value used to display
+          	return tweetLength;
         };
-        
+    
+    	//This function fetches the array message length and updates 'new' twitter msg count
+    	var fetchIndex = function(){
+      		var index = streams.home.length -lastTweetIndex ;
+      		//$('.newTweetIndex').remove();
+      		//$('button').append('<span class=newTweetIndex>' + index + '</span>');
+      		$('.newTweetIndex').text(index);
+      		return index;
+      	};
+      	
+      	//Initial tweets when page loads
         addTweets();
-        setInterval(addTweets, 300);
+        
+        //Button adds new tweets and refreshes new twitter count messages
+        $('button').on('click', function(){
+        	lastTweetIndex = addTweets();
+        	$('.newTweetIndex').text(0);
+        	});
+        
+        //Check on the number of new tweets every 3 seconds
+        setInterval(fetchIndex, 3000);
 
       });
     </script>

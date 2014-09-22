@@ -8,10 +8,10 @@
   
   <style>
   		body {
-    	background-image: url('sky_texture1980.jpg');
-    	background-attachment: fixed;
-    	background-repeat: no-repeat;
-    	background-size:1450px 850px;
+    		background-image: url('bg.png');
+    		background-attachment: fixed;
+			background-repeat: no-repeat;
+			background-color: #C0DEED;
 		}
 		
 		#header {
@@ -22,28 +22,38 @@
 			top: 0px;
 			left: 0px;
 			right: 0px;
+			
 
 		}
 		
 		#feed {
-			margin-top: 100px;
     		color:black;
-    		text-align:center;
+    		position:relative;
+    		top: 100px;
+			width: 550px;
+			background-color:#F0F8FF;
+			text-align: center;
+    
     	}
-    		
-    	li {
-    		list-style-type: none;
+    	
+    	.tweet{
     		background-color:#F0F8FF;
     		border-color:#D3D3D3;
     		text-align:left;
     		border-style: solid;
-    		margin-right: 500px;
-    		margin-left: 500px;
-		}	
+    		list-style-type: none;
+    		}	
+    		
+    	ul {
+    		list-style-type: none;
+    	}	
 		
 		.user{
-			font-weight: bold;
     		text-align:left;
+			font-weight: bold;
+			color: blue;
+    		text-align:left;
+    		
 		}
 		
 		.time{
@@ -51,6 +61,21 @@
 			text-align: left;
 			font-size: small;
 			}
+		.highlight{
+ 			background-color:#CEECF5;
+ 		}
+ 		
+ 		.usertweetwin{
+ 				position:absolute;
+    			right: 300px;
+    			top: 150px;
+ 			}
+ 		.highlightuser{
+ 			color:#848484;
+ 			text-decoration: underline;
+ 			}
+
+}
 	</style>
 
 
@@ -60,9 +85,11 @@
 		<h1>Twittler</h1>
 	</div>
 	
-	<div id="feed">
-		<h1>Tweets</h1>
-		<button class="view" enabled>View new Tweets: <span class="newTweetIndex">0</span></button>
+	<div id="feed" class="feedlist">
+		<div class="feedhead">
+			<h1>Tweets</h1>
+			<button class="view" enabled>View new <span class="newTweetIndex">0</span> Tweets</button>
+		</div>
 	</div>
 	
   	<script>
@@ -83,10 +110,10 @@
 			
         	//Adds new tweets
         	while(index >= 0){
-        		$('#'+index).remove();
+        		$('#' + index).remove();
          	 	var tweet = streams.home[index];
-          		var $tweet = $('<li id="'+ index +'"</li>');
-          		var $username = $('<ul class="user"><span class="' + tweet.user + '"></span></ul>');
+          		var $tweet = $('<li id="' + index + '" class="tweet"></li>');
+          		var $username = $('<ul id="' + tweet.user + '" class="user"></ul>');
           		var $userTweet = $('<ul class="message"></ul>');
           		var $tweetTime = $('<ul class="time"></ul>');
           		
@@ -107,24 +134,64 @@
           	return tweetLength;
         };
     
-    	//This function fetches the array message length and updates 'new' twitter msg count
+    	//Fetches the array message length and updates 'new' twitter msg count
     	var fetchIndex = function(){
       		var index = streams.home.length -lastTweetIndex ;
       		//$('.newTweetIndex').remove();
       		//$('button').append('<span class=newTweetIndex>' + index + '</span>');
       		$('.newTweetIndex').text(index);
-      		return index;
       	};
+      	
+      	var fetchUserTweets = function(user){
+      		var userArrLength = streams.users[user].length;
+      		var indexUser = (streams.users[user].length )- 1;
+      		
+      		$( "body" ).append( '<div class="usertweetwin tweet">@' + user + ' Timeline</div>' );
+      		$('.usertweetwin').append('<button class="close" enabled>close</button>');
+      		var tweetUser = streams.users[user];
+      		while(indexUser>=0){
+      		$('<li class="user">@' + tweetUser[indexUser]["user"] + '</li>').appendTo('.usertweetwin');
+      		$('<ul class="message">' + tweetUser[indexUser]["message"] + '</ul>').appendTo('.usertweetwin');
+      		$('<ul class="time">' + tweetUser[indexUser]["created_at"] + '</ul>').appendTo('.usertweetwin');
+      		indexUser--;
+          	}	
+          	
+      		
+      	};	
       	
       	//Initial tweets when page loads
         addTweets();
         
         //Button adds new tweets and refreshes new twitter count messages
-        $('button').on('click', function(){
+        $('body').on('click', '.close', function(){
+        	$(".usertweetwin").remove();
+        	});
+        
+         $('body').on('click','.view', function(){
         	lastTweetIndex = addTweets();
         	$('.newTweetIndex').text(0);
         	});
         
+        $('body').on('click', '.user',function(){
+        		fetchUserTweets(this.id);
+        	});
+        	
+        $('body').on("mouseenter", ".tweet",function() {
+    		$(this).addClass("highlight");	
+    		});
+    	$('body').on("mouseleave",".tweet", function() {
+    		$(this).removeClass("highlight");
+  			});	
+    	$('body').on("mouseenter", ".user",function() {
+    		$(this).addClass("highlightuser");	
+    		});
+    		
+    	$('body').on("mouseleave",".user", function() {
+    		$(this).removeClass("highlightuser");
+  			});
+  			
+  			
+  			
         //Check on the number of new tweets every 3 seconds
         setInterval(fetchIndex, 3000);
 

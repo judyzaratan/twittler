@@ -12,9 +12,11 @@
     		background-attachment: fixed;
 			background-repeat: no-repeat;
 			background-color: #C0DEED;
+
 		}
 		
 		#header {
+			font: 15px Helvetica, sans-serif;
     		background:#F0F0F0;
     		color: blue;
     		text-align:center;
@@ -27,12 +29,14 @@
 		}
 		
 		#feed {
+			font: 15px Helvetica, sans-serif;
     		color:black;
     		position:relative;
     		top: 100px;
 			width: 550px;
 			background-color:#F0F8FF;
 			text-align: center;
+						
     
     	}
     	
@@ -53,7 +57,7 @@
 			font-weight: bold;
 			color: blue;
     		text-align:left;
-    		
+    		cursor:pointer;
 		}
 		
 		.time{
@@ -66,10 +70,13 @@
  		}
  		
  		.usertweetwin{
+ 				font: 15px Helvetica, sans-serif;
  				position:absolute;
     			right: 300px;
     			top: 150px;
  			}
+ 			
+ 			
  		.highlightuser{
  			color:#848484;
  			text-decoration: underline;
@@ -121,7 +128,7 @@
           		$userTweet.text(tweet.message);
           		$username.text('@' + tweet.user + ':');
           		// ': ' + tweet.message + ", Time: "  + tweet.created_at + " Index: " + index);
-				$tweetTime.text(tweet.created_at);
+				$tweetTime.text(tweet.created_at.toLocaleDateString() + " " + tweet.created_at.toLocaleTimeString());
           		$tweet.appendTo($feed);
           		$username.appendTo('#'+index);
           		$userTweet.appendTo('#'+index);
@@ -173,6 +180,9 @@
         	});
         
         $('body').on('click', '.user',function(){
+        		//Removes existing user tweet window if present
+        		$(".usertweetwin").remove();
+        		//Fetches specific user clicked on
         		fetchUserTweets(this.id);
         	});
         	

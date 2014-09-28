@@ -3,6 +3,7 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <script src="moment.js"></script>
     <title> Twittler </title>
   </head>
   
@@ -142,6 +143,7 @@
                 }
               
                 var message = tweetObj.message;
+                var humanTime = moment(tweetObj.created_at).fromNow();
                 var messageDate = tweetObj.created_at.toLocaleDateString();
                 var messageTime = tweetObj.created_at.toLocaleTimeString();
 
@@ -149,12 +151,14 @@
              	 	//Create html to display on website for each indexed message
                 var $tweet = $('<li id="' + userID + '" class="tweet"></li>');
                 var $userName = $('<ul id="' + user + '" class="user"></ul>');
+
                 var $userTweet = $('<ul class="message"></ul>');
                 var $tweetTime = $('<ul class="time"></ul>'); 
+                var $humanTime = $('<ul class="time">'+ humanTime + '</ul>');
 
-            		//Puts tweet information into html tag
-            		$userTweet.text(message);
-            		$userName.text('@' + user + ':');
+            	//Puts tweet information into html tag
+            	$userTweet.text(message);
+            	$userName.text('@' + user + ':');
                 $tweetTime.text(messageDate + " " + messageTime);
 
               	//Appends items to the feed div
@@ -168,6 +172,7 @@
                 $userName.appendTo(tweetIndex);
                 $userTweet.appendTo(tweetIndex);
                 $tweetTime.appendTo(tweetIndex);
+                $humanTime.appendTo(tweetIndex);
 
                 index -= 1;
             }
